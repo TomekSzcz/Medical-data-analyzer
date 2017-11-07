@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head>
+    <title>Medical Data Monitor</title>
+    <meta name="description" content="free website template"/>
+    <meta name="keywords" content="enter your keywords here"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <link rel="stylesheet" type="text/css" href="../css/style.css"/>
+    <script type="text/javascript" src="../lib/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/history.js"></script>
+</head>
+
+<body>
+<div id="main">
+    <div id="header">
+        <div id="banner">
+            <div id="welcome">
+                <h1>Medical Data</h1>
+            </div><!--close welcome-->
+            <div id="welcome_slogan">
+                <h1>Monitoring Tool</h1>
+            </div><!--close welcome_slogan-->
+        </div><!--close banner-->
+    </div><!--close header-->
+
+    <div id="menubar">
+        <ul id="menu">
+            <li><a href="../index.html">Wstęp</a></li>
+            <li><a href="import.html">Import danych</a></li>
+            <li class="current"><a href="history.html">Historia użycia danych</a></li>
+            <li><a href="reports.html">Tworzenie raportu</a></li>
+        </ul>
+    </div><!--close menubar-->
+
+    <div id="site_content">
+
+        <div class="sidebar_container">
+            <div class="sidebar">
+                <div class="sidebar_item">
+                    <h2>Standardy</h2>
+                    <p><a href="https://en.wikipedia.org/wiki/IEC_62304">ISO 62304</a></p>
+                </div><!--close sidebar_item-->
+                <div class="sidebar_item">
+                    <p><a href="http://www.dicomlibrary.com/dicom/">DICOM</a></p>
+                </div><!--close sidebar_item-->
+            </div><!--close sidebar-->
+            <div class="sidebar">
+                <div class="sidebar_item">
+                    <h2>Główne funkcjonalności:</h2>
+                    <h3>Przechowywanie danych medycznych</h3>
+                    <p>
+                        Użytkownik w aplikacji ma możliwość zapisania danych w formacie DICOM, przeglądania
+                        oraz dodawania ich do tworzonego raportu.
+                    </p>
+                </div><!--close sidebar_item-->
+            </div><!--close sidebar-->
+            <div class="sidebar">
+                <div class="sidebar_item">
+                    <h3>Przeglądanie danych medycznych</h3>
+                    <p>
+                        Aplikacja umożliwia podgląd obrazów medycznych w formacie DICOM oraz podstawowych parametrów
+                        zawartych w obrazach.
+                    </p>
+                </div><!--close sidebar_item-->
+            </div><!--close sidebar-->
+            <div class="sidebar">
+                <div class="sidebar_item">
+                    <h3>Tworzenie raportów</h3>
+                    <p>
+                        Zakładka "Tworzenie Raportu" umożliwia stworzenie raportu w formacie PDF zawierającego
+                        podstawowe dane
+                        medyczne obrazu w standardzie DICOM oraz dodatkowe informacje dodawane przez Użytkownika
+                        podczas użycia danych
+                    </p>
+                </div><!--close sidebar_item-->
+            </div><!--close sidebar-->
+            <div class="sidebar">
+                <div class="sidebar_item">
+                    <h2>Kontakt</h2>
+                    <p>Tel: +48 730 013 367</p>
+                    <p>E-mail: <a href="mailto:tomasz.szczesniak11@gmail.com">tomasz.szczesniak11@gmail.com</a></p>
+                </div><!--close sidebar_item-->
+            </div><!--close sidebar-->
+        </div><!--close sidebar_container-->
+
+        <div id="content">
+            <div class="content_item">
+                <h2>Tabela z historią użycia danych</h2>
+                <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Wyszukaj po zbiorze danych"
+                       title="Type in a name">
+                <table id="usageHistory" class="tg">
+                    <tr>
+                        <th class="tg-fqys">Data użycia</th>
+                        <th class="tg-fqys">Użytkownik</th>
+                        <th class="tg-fqys">Identyfikator raportu</th>
+                        <th class="tg-1sci">Komentarz</th>
+                        <th class="tg-fqys">Identyfikator zbioru danych medycznych</th>
+                        <th class="tg-fqys">Pełna lista obrazów medycznych w zbiorze</th>
+                    </tr>
+                    <tr>
+                        <td class="tg-yw4l"></td>
+                        <td class="tg-yw4l"></td>
+                        <td class="tg-yw4l"></td>
+                        <td class="tg-yw4l"></td>
+                        <td class="tg-yw4l"></td>
+                        <td class="tg-yw4l"></td>
+                    </tr>
+                </table>
+            </div><!--close content_item-->
+        </div><!--content-->
+    </div><!--close site_content-->
+
+
+</div><!--close main-->
+
+<div id="footer">
+    <a>@Tomasz Szcześniak</a><a>tomasz.szczesniak11@gmail.com</a>
+</div>
+
+</body>
+</html>
