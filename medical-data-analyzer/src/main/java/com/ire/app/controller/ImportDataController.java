@@ -29,22 +29,14 @@ public class ImportDataController {
     public ResponseEntity<?> uploadFile(
             @RequestParam("file") MultipartFile uploadFile) {
 
-        try {
-            String filename = uploadFile.getOriginalFilename();
-            String directory = env.getProperty("paths.uploadedFiles");
-            manageDataService.importData(uploadFile);
-//            BufferedOutputStream stream =
-//                    new BufferedOutputStream(new FileOutputStream(new File()));
-//            stream.write(uploadFile.getBytes());
-//            stream.close();
+        LOGGER.info("New file to upload {}", uploadFile.getOriginalFilename());
+        boolean wasSuccess = manageDataService.importData(uploadFile);
+        if (wasSuccess){
+            return new ResponseEntity(HttpStatus.OK);
         }
-        catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
+
     @RequestMapping("/test")
     public String test(){
         return "OK";

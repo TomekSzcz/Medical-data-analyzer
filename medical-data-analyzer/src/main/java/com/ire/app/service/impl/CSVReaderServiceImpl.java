@@ -23,8 +23,7 @@ public class CSVReaderServiceImpl implements CSVReaderService {
     @Override
     public List<List<String>> readCSVfile(File file) {
         LOGGER.info("file name: {}", file.getName());
-        parseCSVfile(file);
-        return null;
+        return parseCSVfile(file);
     }
 
     private List<List<String>> parseCSVfile(File file) {
