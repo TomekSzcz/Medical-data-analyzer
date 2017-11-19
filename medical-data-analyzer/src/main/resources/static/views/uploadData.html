@@ -64,7 +64,10 @@
     <script src="../js/custom-file-input.js"></script>
 
 </head>
-<body>
+<body ng-controller = "uploaderCtrl">
+<div class="overlay">
+	<div id="loading-img"></div>
+</div>
 
 <div id="fh5co-page">
 	<a href="#" class="js-fh5co-nav-toggle fh5co-nav-toggle"><i></i></a>
@@ -89,7 +92,7 @@
 
 	</aside>
 
-	<div id="fh5co-main" ng-controller = "uploaderCtrl">
+	<div id="fh5co-main" >
 
 		<div class="fh5co-narrow-content">
 			<h2 class="fh5co-heading animate-box" data-animate-effect="fadeInLeft"><p>Import Medical Data from CSV

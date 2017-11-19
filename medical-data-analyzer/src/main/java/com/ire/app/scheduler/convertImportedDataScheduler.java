@@ -26,7 +26,7 @@ public class convertImportedDataScheduler {
 
 
 
-    @Scheduled(fixedRate = 20000)
+   // @Scheduled(fixedRate = 20000)
     public void convertDataForTSNE() {
         LOGGER.info("Schedule for TSNE started");
         List<DataToConvert> dataToConvertList = manageDataService.collectDataForTSNE();
@@ -42,11 +42,20 @@ public class convertImportedDataScheduler {
         });
     }
 
- //   @Scheduled(fixedRate = 500000)
+    @Scheduled(fixedRate = 50000)
     public void convertDataForPSA() {
-        LOGGER.info("Schedule for PSA started");
-        List<DataToConvert> dataToConvertList = manageDataService.collectDataForPSA();
+        LOGGER.info("Schedule for PCA started");
+        List<DataToConvert> dataToConvertList = manageDataService.collectDataForPCA();
         LOGGER.info("Found imports: {}", dataToConvertList.size());
+        dataToConvertList.stream().forEach(dataToConvert -> {
+            DataForAlgorithm dataForAlgorithm = algorithmsService.prepareDataForAlgorithm(dataToConvert);
+            double[][] resultsPCA = algorithmsService.usePcaAlgorithm(dataForAlgorithm.getData());
+            LOGGER.info("Results for TSNE size: {}", resultsPCA[0].length);
+            ConvertedDataInfo convertedDataInfo = prepareProccessedData(dataToConvert.getImportedDataModel().getFileName(),
+                    ConvertedDataInfo.ALGORITHM.PCA, dataToConvert.getImportedDataModel().getId());
+            manageDataService.saveProcessedData(convertedDataInfo,
+                    resultsPCA, dataForAlgorithm.getDiagnoses());
+        });
     }
 
     private ConvertedDataInfo prepareProccessedData(String fileName,

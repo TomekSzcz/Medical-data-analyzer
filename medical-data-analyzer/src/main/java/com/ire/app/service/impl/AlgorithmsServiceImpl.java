@@ -1,5 +1,6 @@
 package com.ire.app.service.impl;
 
+import Jama.Matrix;
 import com.ire.app.model.DataForAlgorithm;
 import com.ire.app.model.DataToConvert;
 import com.ire.app.model.entity.ImportedRow;
@@ -9,6 +10,7 @@ import com.jujutsu.tsne.barneshut.BHTSne;
 import com.jujutsu.tsne.barneshut.BarnesHutTSne;
 import com.jujutsu.tsne.barneshut.TSneConfig;
 import com.jujutsu.tsne.barneshut.TSneConfiguration;
+import com.mkobos.pca_transform.PCA;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,8 +26,11 @@ public class AlgorithmsServiceImpl implements AlgorithmsService {
 
     @Override
     public double[][] usePcaAlgorithm(double[][] dataMatrix) {
-
-        return new double[0][];
+        Matrix algorithmData = new Matrix(dataMatrix);
+        PCA pca = new PCA(algorithmData);
+        Matrix transformedData =
+                pca.transform(algorithmData, PCA.TransformationType.WHITENING);
+        return transformedData.getArray();
     }
 
     @Override
@@ -64,8 +69,8 @@ public class AlgorithmsServiceImpl implements AlgorithmsService {
 
     private TSneConfiguration prepareTSneConfiguration(double[][] dataMatrix){
         TSneConfiguration tSneConfiguration = new TSneConfig(
-                dataMatrix, 2, dataMatrix.length, 20.0,
-                3000, true, 5, false, true);
+                dataMatrix, 2, dataMatrix.length, 30,
+                20000, true, 0.7, false, true);
         return tSneConfiguration;
 
     }

@@ -24,9 +24,11 @@ myApp.service('fileUpload', ['$http', function ($http) {
                 headers: {'Content-Type': undefined}
             })
             .success(function(){
+                $(".overlay").hide();
                 alert("File uploaded correctly!");
             })
             .error(function(){
+                $(".overlay").hide();
                 alert("Some error occurred!");
             });
     }
@@ -34,6 +36,7 @@ myApp.service('fileUpload', ['$http', function ($http) {
 
 myApp.controller('uploaderCtrl', ['$scope', 'fileUpload', function($scope, fileUpload){
     $scope.uploadFile = function(){
+        $(".overlay").show();
         var file = $scope.myFile;
         var uploadUrl = "/import/fileUpload";
         fileUpload.uploadFileToUrl(file, uploadUrl);

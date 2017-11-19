@@ -96,7 +96,7 @@ public class ManageDataServiceImpl implements ManageDataService {
     }
 
     @Override
-    public List<DataToConvert> collectDataForPSA() {
+    public List<DataToConvert> collectDataForPCA() {
         List<DataToConvert> dataToConvertList = new ArrayList<>();
         List<ImportedDataModel> importedDataForPSA =
                 importedDataRepository.getAllByImportStatusAndConvertedByPSA(

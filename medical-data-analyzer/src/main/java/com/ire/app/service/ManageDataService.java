@@ -17,7 +17,7 @@ public interface ManageDataService {
 
     List<DataToConvert> collectDataForTSNE();
 
-    List<DataToConvert> collectDataForPSA();
+    List<DataToConvert> collectDataForPCA();
 
     List<AvailableData> getImports();
 
