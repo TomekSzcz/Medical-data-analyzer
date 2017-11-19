@@ -161,7 +161,7 @@ myApp.controller('imported', function ($scope, $http) {
         });
 
         $(".chart").show();
-        new Chart(document.getElementById("canvasBubble"), {
+        $scope.chartBubble = new Chart(document.getElementById("canvasBubble"), {
             type: 'bubble',
             data: {
                 labels: "Diagnosis",
@@ -213,6 +213,7 @@ myApp.controller('imported', function ($scope, $http) {
     $scope.hideChart = function () {
         document.getElementById('light').style.display = 'none';
         document.getElementById('fade').style.display = 'none';
+        $scope.chartBubble.destroy();
     }
 
 });

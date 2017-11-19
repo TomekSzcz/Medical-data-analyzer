@@ -26,7 +26,7 @@ public class convertImportedDataScheduler {
 
 
 
-   // @Scheduled(fixedRate = 20000)
+    @Scheduled(fixedRate = 1000000)
     public void convertDataForTSNE() {
         LOGGER.info("Schedule for TSNE started");
         List<DataToConvert> dataToConvertList = manageDataService.collectDataForTSNE();
@@ -42,7 +42,7 @@ public class convertImportedDataScheduler {
         });
     }
 
-    @Scheduled(fixedRate = 50000)
+    @Scheduled(fixedRate = 2400000)
     public void convertDataForPSA() {
         LOGGER.info("Schedule for PCA started");
         List<DataToConvert> dataToConvertList = manageDataService.collectDataForPCA();
