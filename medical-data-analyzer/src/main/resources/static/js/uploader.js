@@ -1,16 +1,4 @@
-/**
- * Created by Tomek on 01.11.2017.
- */
-
-
 var myApp = angular.module('uploader', []);
-
-myApp.controller('Uploader', function($scope, $http) {
-    $http.get('http://rest-service.guides.spring.io/greeting').
-    then(function(response) {
-        $scope.greeting = response.data;
-    });
-});
 
 myApp.directive('fileModel', ['$parse', function ($parse) {
     return {
@@ -36,19 +24,18 @@ myApp.service('fileUpload', ['$http', function ($http) {
                 headers: {'Content-Type': undefined}
             })
             .success(function(){
+                alert("File uploaded correctly!");
             })
             .error(function(){
+                alert("Some error occurred!");
             });
     }
 }]);
 
-myApp.controller('myCtrl', ['$scope', 'fileUpload', function($scope, fileUpload){
-
+myApp.controller('uploaderCtrl', ['$scope', 'fileUpload', function($scope, fileUpload){
     $scope.uploadFile = function(){
         var file = $scope.myFile;
-        console.log('file is ' );
-        console.dir(file);
-        var uploadUrl = "/fileUpload";
+        var uploadUrl = "/import/fileUpload";
         fileUpload.uploadFileToUrl(file, uploadUrl);
     };
 

@@ -13,7 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * Created by Tomek on 01.11.2017.
  */
-@RestController()
+@RestController
+@RequestMapping("/import")
 public class ImportDataController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImportDataController.class);

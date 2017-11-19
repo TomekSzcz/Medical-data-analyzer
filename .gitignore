@@ -8,3 +8,4 @@
 .idea/compiler.xml
 .idea/
 medical-data-analyzer/target/
+tsne-core/target/
