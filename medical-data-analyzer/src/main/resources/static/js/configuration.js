@@ -83,7 +83,6 @@
     var counterWayPoint = function () {
         if ($('#counter-animate').length > 0) {
             $('#counter-animate').waypoint(function (direction) {
-
                 if (direction === 'down' && !$(this.element).hasClass('animated')) {
                     setTimeout(counter, 400);
                     $(this.element).addClass('animated');
@@ -94,11 +93,9 @@
     };
 
     var burgerMenu = function () {
-
         $('.js-fh5co-nav-toggle').on('click', function (event) {
             event.preventDefault();
             var $this = $(this);
-
             if ($('body').hasClass('offcanvas')) {
                 $this.removeClass('active');
                 $('body').removeClass('offcanvas');
@@ -107,8 +104,6 @@
                 $('body').addClass('offcanvas');
             }
         });
-
-
     };
 
     // Document on load.
@@ -120,99 +115,28 @@
         counterWayPoint();
         burgerMenu();
     });
-
-
 }());
 
 
-var myApp = angular.module('imported', []);
+var myApp = angular.module('configuration', []);
 
-myApp.controller('imported', function ($scope, $http) {
-    $http.get('/processed/data').then(function (response) {
-        $scope.array = [];
+myApp.controller('configuration', function ($scope, $http) {
+    $http.get('/config/algorithm/data').then(function (response) {
+        $scope.config = [];
         angular.forEach(response.data, function (element) {
-            $scope.array.push(element);
+            $scope.config.push(element);
         });
+        $scope.tsneConfig = $scope.config.filter(function(item) {
+            return item.algorithmName === 'tsne';
+        })[0];
     });
 
-    $scope.showChart = function (dataId, algorithm) {
-        $scope.arraySick = [];
-        $scope.arrayHealthy = [];
-        $(".overlay").show();
-        $http.get('/processed/data/chart?importID=' + dataId + '&algorithm=' + algorithm).then(function (response) {
-            angular.forEach(response.data, function (element) {
-                if (element.diagnosis == 'healthy') {
-                    var row = {
-                        x: element.axisX,
-                        y: element.axisY,
-                        r: 7
-                    };
-                    $scope.arrayHealthy.push(row);
-                } else if (element.diagnosis == 'sick') {
-                    var row = {
-                        x: element.axisX,
-                        y: element.axisY,
-                        r: 7
-                    };
-                    $scope.arraySick.push(row);
-                }
+    $scope.submitForm = function () {
+        console.log($scope.tsneConfig);
+        $http.post('/config/algorithm',
+            JSON.stringify($scope.tsneConfig)).success(function(){
+                alert("Configurations saved correctly!")
             });
-        });
-
-        $(".chart").show();
-        $scope.chartBubble = new Chart(document.getElementById("canvasBubble"), {
-            type: 'bubble',
-            data: {
-                labels: "Diagnosis",
-                datasets: [{
-                    label: ["Sick"],
-                    backgroundColor: "rgba(211,50,21,0.6)",
-                    borderColor: "rgba(176,34,44,0.9)",
-                    title: "Sick",
-                    data: $scope.arraySick,
-                    display: true
-                }, {
-                    label: ["Healthy"],
-                    backgroundColor: "rgba(60,186,159,0.2)",
-                    borderColor: "rgba(60,186,159,1)",
-                    title: "Healthy",
-                    data: $scope.arrayHealthy,
-                    display: true
-                }]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: 'Data processed using algorithm: ' + algorithm
-                },
-                scales: {
-                    yAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: "Y"
-                        }
-                    }],
-                    xAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: "X"
-                        }
-                    }]
-                }
-            }
-        });
-
-        $(".overlay").hide();
-
-        document.getElementById("light").style.display = 'block';
-        document.getElementById("fade").style.display = 'block';
-
-    };
-
-    $scope.hideChart = function () {
-        document.getElementById('light').style.display = 'none';
-        document.getElementById('fade').style.display = 'none';
-        $scope.chartBubble.destroy();
     }
 
 });

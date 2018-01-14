@@ -20,9 +20,6 @@ public class ImportDataController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImportDataController.class);
 
     @Autowired
-    private Environment env;
-
-    @Autowired
     private ManageDataService manageDataService;
 
     @RequestMapping(value="/fileUpload",method = RequestMethod.POST)

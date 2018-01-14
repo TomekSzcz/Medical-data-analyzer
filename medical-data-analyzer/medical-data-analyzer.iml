@@ -97,5 +97,9 @@
     <orderEntry type="library" name="Maven: com.github.fommil.netlib:netlib-native_system-win-x86_64:natives:1.1" level="project" />
     <orderEntry type="library" name="Maven: com.github.fommil.netlib:netlib-native_system-win-i686:natives:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.jblas:jblas:1.2.3" level="project" />
+    <orderEntry type="library" name="Maven: com.github.haifengl:smile-core:1.5.0" level="project" />
+    <orderEntry type="library" name="Maven: com.github.haifengl:smile-data:1.5.0" level="project" />
+    <orderEntry type="library" name="Maven: com.github.haifengl:smile-math:1.5.0" level="project" />
+    <orderEntry type="library" name="Maven: com.github.haifengl:smile-graph:1.5.0" level="project" />
   </component>
 </module>

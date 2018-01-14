@@ -1,16 +1,21 @@
 package com.ire.app.service.impl;
 
 import Jama.Matrix;
+import com.ire.app.model.AlgorithmConfigData;
 import com.ire.app.model.DataForAlgorithm;
 import com.ire.app.model.DataToConvert;
+import com.ire.app.model.entity.AlgorithmsConfig;
+import com.ire.app.model.entity.ConvertedDataInfo;
 import com.ire.app.model.entity.ImportedRow;
 import com.ire.app.model.entity.RowAttribute;
+import com.ire.app.repository.AlgorithmConfigurationRepository;
 import com.ire.app.service.AlgorithmsService;
 import com.jujutsu.tsne.barneshut.BHTSne;
 import com.jujutsu.tsne.barneshut.BarnesHutTSne;
 import com.jujutsu.tsne.barneshut.TSneConfig;
 import com.jujutsu.tsne.barneshut.TSneConfiguration;
 import com.mkobos.pca_transform.PCA;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,8 +26,10 @@ import java.util.stream.Collectors;
 @Service
 public class AlgorithmsServiceImpl implements AlgorithmsService {
 
-
     private final BarnesHutTSne barnesHutTSne = new BHTSne();
+
+    @Autowired
+    private AlgorithmConfigurationRepository algorithmConfigurationRepository;
 
     @Override
     public double[][] usePcaAlgorithm(double[][] dataMatrix) {
@@ -57,6 +64,44 @@ public class AlgorithmsServiceImpl implements AlgorithmsService {
         return dataForAlgorithm;
     }
 
+    @Override
+    public List<AlgorithmConfigData> getActualAlgorithmsConfiguration() {
+        AlgorithmsConfig algorithmsConfig = algorithmConfigurationRepository.findTopByAlgorithmNameOrderByIdDesc(
+                ConvertedDataInfo.ALGORITHM.TSNE.getAlgorithmName());
+        List<AlgorithmConfigData> algorithmConfigList = new ArrayList<>();
+        AlgorithmConfigData algorithmConfigData = new AlgorithmConfigData(
+                algorithmsConfig.getAlgorithmName().getAlgorithmName(),
+                algorithmsConfig.getMaxIteration(),
+                algorithmsConfig.getPerplexity(),
+                algorithmsConfig.getTheta(),
+                algorithmsConfig.getUsePca()
+        );
+        algorithmConfigList.add(algorithmConfigData);
+        return algorithmConfigList;
+    }
+
+    @Override
+    public void saveAlgorithmConfiguration(AlgorithmConfigData algorithmConfigData) {
+        AlgorithmsConfig algorithmsConfig = new AlgorithmsConfig();
+        ConvertedDataInfo.ALGORITHM algorithm;
+        if(ConvertedDataInfo.ALGORITHM.TSNE.getAlgorithmName().equals(algorithmConfigData.getAlgorithmName())){
+            algorithm = ConvertedDataInfo.ALGORITHM.TSNE;
+        }else if(ConvertedDataInfo.ALGORITHM.PCA.getAlgorithmName().equals(algorithmConfigData.getAlgorithmName())){
+            algorithm = ConvertedDataInfo.ALGORITHM.PCA;
+        }else {
+            algorithm = ConvertedDataInfo.ALGORITHM.UNKNOWN;
+        }
+        algorithmsConfig.setAlgorithmName(algorithm);
+        algorithmsConfig.setMaxIteration(algorithmConfigData.getMaxIteration());
+        algorithmsConfig.setPerplexity(algorithmConfigData.getPerplexity());
+        algorithmsConfig.setTheta(algorithmConfigData.getTheta());
+        algorithmsConfig.setUsePca(algorithmConfigData.getUsePCA());
+        AlgorithmsConfig save = algorithmConfigurationRepository.save(algorithmsConfig);
+        if(save == null){
+            throw new IllegalArgumentException("Error on saving algorithm config");
+        }
+    }
+
     private double[] getAttributesForRow(int rowID, List<RowAttribute> attributes){
         List<RowAttribute> rowAttributes = attributes.stream().filter(attr -> attr.getCopyRowId() == rowID)
                 .collect(Collectors.toList());
@@ -68,9 +113,11 @@ public class AlgorithmsServiceImpl implements AlgorithmsService {
     }
 
     private TSneConfiguration prepareTSneConfiguration(double[][] dataMatrix){
+        AlgorithmsConfig algorithmConfig = algorithmConfigurationRepository
+                .findTopByAlgorithmNameOrderByIdDesc(ConvertedDataInfo.ALGORITHM.TSNE.getAlgorithmName());
         TSneConfiguration tSneConfiguration = new TSneConfig(
-                dataMatrix, 2, dataMatrix.length, 30,
-                20000, true, 0.7, false, true);
+                dataMatrix, 2, dataMatrix.length, algorithmConfig.getPerplexity(),
+                algorithmConfig.getMaxIteration(), algorithmConfig.getUsePca(), algorithmConfig.getTheta(), false, true);
         return tSneConfiguration;
 
     }
