@@ -4,17 +4,27 @@
 Medical-data-analyzer is created to allow Users to vizualize results of the most common dimensionality reduction algorithms.
 Currently there are two of them available:
 
-## T-SNE -> 
+### T-SNE -> 
 ```markdown
   description: https://lvdmaaten.github.io/tsne/
   (used: https://github.com/lejon/T-SNE-Java)
 ```
 
-## PCA -> 
+### PCA -> 
 ```markdown
   description: https://en.wikipedia.org/wiki/Principal_component_analysis
   (used: https://github.com/mkobos/pca_transform)
   ```
+  
+## Using application
+There are two option to run the application:
+
+### Docker images
+```markdown
+You can easily download docker images available on the official docker site (https://hub.docker.com/u/tszczesn/) 
+  docker pull tszczesn/medical_data_database
+  docker pull tszczesn/medical_data_analyzer
+```
 
 
 
