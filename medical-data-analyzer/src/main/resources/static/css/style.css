@@ -241,6 +241,15 @@ p {
     padding-left: 50px;
     margin-bottom: 0px;
 }
+.myFormP {
+    font-size: 30px;
+    padding-left: 0px;
+}
+
+.myFormSubmit{
+    padding-left: 0px;
+    padding-top: 30px;
+}
 
 #fh5co-aside .fh5co-footer span {
     display: block;

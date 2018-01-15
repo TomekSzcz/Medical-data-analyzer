@@ -42,13 +42,16 @@
             <artifactId>pca_transform</artifactId>
             <version>1.0.1</version>
         </dependency>
-
         <dependency>
             <groupId>com.jujutsu.tsne</groupId>
             <artifactId>tsne</artifactId>
             <version>2.3.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.haifengl</groupId>
+            <artifactId>smile-core</artifactId>
+            <version>1.5.0</version>
+        </dependency>
     </dependencies>
 
     <build>

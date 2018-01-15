@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="imported">
+<html ng-app="configuration">
 
 <!--[if lt IE 7]>
 <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -57,22 +57,9 @@
 
     <!-- MAIN JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
-    <script src="../js/imported_data.js"></script>
+    <script src="../js/configuration.js"></script>
 </head>
-<body ng-controller="imported">
-
-<div class="overlay">
-    <div id="loading-img"></div>
-</div>
-
-
-<div id="light" class="white_content">
-    <div class="chart">
-        <canvas id="canvasBubble" height="600px" width="600px"></canvas>
-    </div>
-    <a ng-click="hideChart()" class="myButton">Close</a>
-</div>
-<div id="fade" class="black_overlay"></div>
+<body>
 
 <div id="fh5co-page">
     <a href="#" class="js-fh5co-nav-toggle fh5co-nav-toggle"><i></i></a>
@@ -97,22 +84,43 @@
 
     </aside>
 
-    <div id="fh5co-main">
-
+    <div id="fh5co-main" ng-controller="configuration">
         <div class="fh5co-narrow-content">
-            <h2 class="fh5co-heading animate-box" data-animate-effect="fadeInLeft"><p>Medical Data
-                Analyzer</p></span></h2>
+            <h2 class="fh5co-heading animate-box" data-animate-effect="fadeInLeft">
+                <p>Algorithms configuration</p></span></h2>
 
-            <!--<div class="row animate-box" data-animate-effect="fadeInLeft">-->
-            <!--<div ng-repeat="obj in array" class="col-md-4 col-sm-6 col-xs-6 col-xxs-12 work-item">-->
-            <!--<img src="../images/analysis.png" class="img-responsive">-->
-            <!--<h3 class="fh5co-work-title">{{obj.fileName}}</h3>-->
-            <!--<p style="color: firebrick">{{obj.importDate}}</p>-->
-            <!--<a class="btn red" ng-click="showChart(obj.importId, 'tsne')">TSNE</a>-->
-            <!--<a class="btn red" ng-click="showChart(obj.importId, 'pca')">PCA</a>-->
-            <!--</div>-->
-            <!--<div class="clearfix visible-sm-block"></div>-->
-            <!--</div>-->
+            <form name="myForm">
+                <p class="myFormP"><label><b>T-SNE</b></label></p><br/>
+                <label>Maximum iteration:
+                    <input type="number" class="form-control" name="maxIteration"
+                           placeholder="Number" ng-model="tsneConfig.maxIteration" required>
+                    <span style="color:red" ng-show="myForm.maxIteration.$dirty && myForm.maxIteration.$invalid">
+                        <span ng-show="myForm.maxIteration.$error.required">Value is required.</span>
+                    </span>
+                </label><br/>
+                <label>Perplexity:
+                    <input type="number" class="form-control"
+                           name="perplexity" placeholder="Decimal" ng-model="tsneConfig.perplexity"
+                           ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required />
+                    <span style="color:red" ng-show="myForm.perplexity.$dirty && myForm.perplexity.$invalid">
+                        <span ng-show="myForm.perplexity.$error.required">Value is required.</span>
+                    </span>
+                </label><br/>
+                <label>Theta:
+                    <input type="number" placeholder="Decimal" class="form-control"
+                           name="theta" ng-model="tsneConfig.theta"
+                           ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required />
+                    <span style="color:red" ng-show="myForm.theta.$dirty && myForm.theta.$invalid">
+                        <span ng-show="myForm.theta.$error.required">Value is required.</span>
+                    </span>
+                </label><br/>
+                <label>Use PCA:
+                    <input type="checkbox" name="usePCA" ng-model="tsneConfig.usePCA">
+                </label><br/>
+                <p class="myFormSubmit">
+                    <input type="submit" ng-click="submitForm()" value="Save configuration">
+                </p>
+            </form>
         </div>
 
 

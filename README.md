@@ -4,51 +4,42 @@
 Medical-data-analyzer is created to allow Users to vizualize results of the most common dimensionality reduction algorithms.
 Currently there are two of them available:
 
-## T-SNE -> 
-```markdown
-  description: https://lvdmaaten.github.io/tsne/
-  (used: https://github.com/lejon/T-SNE-Java)
+### T-SNE -> 
+  [Algorithm description](https://lvdmaaten.github.io/tsne/)
+  
+  [Implementation](https://github.com/lejon/T-SNE-Java)
+
+### PCA -> 
+  [Algorithm description](https://en.wikipedia.org/wiki/Principal_component_analysis)
+  
+  [Implementation](https://github.com/mkobos/pca_transform)
+   
+## Using application
+There are two option to run the application:
+
+### Docker images
+To run the application you will need two docker images (available on the [official docker site](https://hub.docker.com/u/tszczesn/)):
+ ```markdown
+ - medical_data_database -> containing mysql database with created schema 
+ - medical_data_analyzer -> image with web application which is using previous docker image as a database 
 ```
-
-## PCA -> 
-```markdown
-  description: https://en.wikipedia.org/wiki/Principal_component_analysis
-  (used: https://github.com/mkobos/pca_transform)
-  ```
-
-
-
-
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+To pull the images from docker repository use the commands below:
 ```
+docker pull tszczesn/medical_data_database
+docker pull tszczesn/medical_data_analyzer
+```
+and run both of them using the commands (NOTE: mind the order as the medical_data_database needs to be run first):
+```
+docker run --name=medical_data_database -d tszczesn/medical_data_database
+docker run --link medical_data_database -p 8080:8080 --name=analyzer -d tszczesn/medical_data_analyzer
+```
+The application is available under [localhost:8080](localhost:8080) address
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
 
-### Jekyll Themes
+### Maven build the source code
+To run the application directly from the source code checkout master branch:
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/TomekSzcz/Medical-data-analyzer/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+
 
 ### Support or Contact
 
