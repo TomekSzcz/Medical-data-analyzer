@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface ConvertedDataRowsRepository extends CrudRepository<ConvertedDataRows, ConvertedDataRowsPK> {
 
-    List<ConvertedDataRows> getAllByConvertedDataRowsPK_ImportIdOrderByCopyId(int copyId);
+    List<ConvertedDataRows> getAllByConvertedDataRowsPK_ConvertedDataIdOrderByCopyId(int copyId);
 }

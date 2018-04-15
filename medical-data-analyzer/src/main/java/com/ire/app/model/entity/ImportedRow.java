@@ -30,38 +30,12 @@ public class ImportedRow {
         this.importId = importId;
     }
 
-    public Enum getDiagnosis() {
-        if(DIAGNOSIS.SICK.getDiagnosis().equals(diagnosis)){
-            return DIAGNOSIS.SICK;
-        }else if(DIAGNOSIS.HEALTHY.getDiagnosis().equals(diagnosis)) {
-            return DIAGNOSIS.HEALTHY;
-        }else {
-            return DIAGNOSIS.UNKNOWN;
-        }
+    public String getDiagnosis() {
+        return diagnosis;
     }
 
-    public void setDiagnosis(DIAGNOSIS diagnosis) {
-        this.diagnosis = diagnosis.toString();
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
     }
 
-    public enum DIAGNOSIS {
-        SICK("sick"),
-        HEALTHY("healthy"),
-        UNKNOWN("unknown");
-
-        public String diagnosis;
-
-        DIAGNOSIS(String diagnosis) {
-            this.diagnosis = diagnosis;
-        }
-
-        public String getDiagnosis() {
-            return diagnosis;
-        }
-
-        @Override
-        public String toString() {
-            return getDiagnosis();
-        }
-    }
 }

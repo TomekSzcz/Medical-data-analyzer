@@ -1,9 +1,9 @@
 package com.ire.app.scheduler;
 
 
-import com.ire.app.model.entity.ConvertedDataInfo;
 import com.ire.app.model.DataForAlgorithm;
 import com.ire.app.model.DataToConvert;
+import com.ire.app.model.entity.ConvertedDataInfo;
 import com.ire.app.service.AlgorithmsService;
 import com.ire.app.service.ManageDataService;
 import org.slf4j.Logger;
@@ -24,13 +24,11 @@ public class convertImportedDataScheduler {
     @Autowired
     private AlgorithmsService algorithmsService;
 
-
-
-    @Scheduled(fixedRate = 1000000)
+    @Scheduled(fixedRate = 10000000)
     public void convertDataForTSNE() {
         LOGGER.info("Schedule for TSNE started");
         List<DataToConvert> dataToConvertList = manageDataService.collectDataForTSNE();
-        LOGGER.info("Found imports: {}", dataToConvertList.size());
+        LOGGER.info("Found imports TSNE: {}", dataToConvertList.size());
         dataToConvertList.stream().forEach(dataToConvert -> {
             DataForAlgorithm dataForAlgorithm = algorithmsService.prepareDataForAlgorithm(dataToConvert);
             double[][] resultsTSNE = algorithmsService.useTSneAlgorithm(dataForAlgorithm.getData());
@@ -38,23 +36,40 @@ public class convertImportedDataScheduler {
             ConvertedDataInfo convertedDataInfo = prepareProccessedData(dataToConvert.getImportedDataModel().getFileName(),
                     ConvertedDataInfo.ALGORITHM.TSNE, dataToConvert.getImportedDataModel().getId());
             manageDataService.saveProcessedData(convertedDataInfo,
-                    resultsTSNE, dataForAlgorithm.getDiagnoses());
+                    resultsTSNE, dataForAlgorithm.getDiagnoses(), dataForAlgorithm.getOriginalDataRowIds());
+
         });
     }
 
     @Scheduled(fixedRate = 2400000)
-    public void convertDataForPSA() {
+    public void convertDataForPCA() {
         LOGGER.info("Schedule for PCA started");
         List<DataToConvert> dataToConvertList = manageDataService.collectDataForPCA();
-        LOGGER.info("Found imports: {}", dataToConvertList.size());
+        LOGGER.info("Found imports for PCA: {}", dataToConvertList.size());
         dataToConvertList.stream().forEach(dataToConvert -> {
             DataForAlgorithm dataForAlgorithm = algorithmsService.prepareDataForAlgorithm(dataToConvert);
             double[][] resultsPCA = algorithmsService.usePcaAlgorithm(dataForAlgorithm.getData());
-            LOGGER.info("Results for TSNE size: {}", resultsPCA[0].length);
+            LOGGER.info("Results for PCA size: {}", resultsPCA[0].length);
             ConvertedDataInfo convertedDataInfo = prepareProccessedData(dataToConvert.getImportedDataModel().getFileName(),
                     ConvertedDataInfo.ALGORITHM.PCA, dataToConvert.getImportedDataModel().getId());
             manageDataService.saveProcessedData(convertedDataInfo,
-                    resultsPCA, dataForAlgorithm.getDiagnoses());
+                    resultsPCA, dataForAlgorithm.getDiagnoses(), dataForAlgorithm.getOriginalDataRowIds());
+        });
+    }
+
+    @Scheduled(fixedRate = 3000000)
+    public void convertDataForLLE() {
+        LOGGER.info("Schedule for LLE started");
+        List<DataToConvert> dataToConvertList = manageDataService.collectDataForLLE();
+        LOGGER.info("Found imports for LLE: {}", dataToConvertList.size());
+        dataToConvertList.stream().forEach(dataToConvert -> {
+            DataForAlgorithm dataForAlgorithm = algorithmsService.prepareDataForAlgorithm(dataToConvert);
+            double[][] resultsLLE = algorithmsService.useLLEAlgorithm(dataForAlgorithm.getData());
+            LOGGER.info("Results for LLE size: {}", resultsLLE[0].length);
+            ConvertedDataInfo convertedDataInfo = prepareProccessedData(dataToConvert.getImportedDataModel().getFileName(),
+                    ConvertedDataInfo.ALGORITHM.LLE, dataToConvert.getImportedDataModel().getId());
+            manageDataService.saveProcessedData(convertedDataInfo,
+                    resultsLLE, dataForAlgorithm.getDiagnoses(), dataForAlgorithm.getOriginalDataRowIds());
         });
     }
 
