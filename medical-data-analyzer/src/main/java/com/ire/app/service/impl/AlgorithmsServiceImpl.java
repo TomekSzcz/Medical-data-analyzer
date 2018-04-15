@@ -17,6 +17,10 @@ import com.jujutsu.tsne.barneshut.TSneConfiguration;
 import com.mkobos.pca_transform.PCA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import smile.manifold.IsoMap;
+import smile.manifold.LLE;
+import smile.mds.MDS;
+import smile.mds.SammonMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +38,7 @@ public class AlgorithmsServiceImpl implements AlgorithmsService {
     @Override
     public double[][] usePcaAlgorithm(double[][] dataMatrix) {
         Matrix algorithmData = new Matrix(dataMatrix);
+
         PCA pca = new PCA(algorithmData);
         Matrix transformedData =
                 pca.transform(algorithmData, PCA.TransformationType.WHITENING);
@@ -48,19 +53,30 @@ public class AlgorithmsServiceImpl implements AlgorithmsService {
     }
 
     @Override
+    public double[][] useLLEAlgorithm(double[][] dataMatrix) {
+        AlgorithmsConfig configuration = getLLENeighboursConfiguration();
+        LLE lle = new LLE(dataMatrix, 2, configuration.getNeighboursNo());
+        double[][] coordinates = lle.getCoordinates();
+        return coordinates;
+    }
+
+    @Override
     public DataForAlgorithm prepareDataForAlgorithm(DataToConvert dataToConvert) {
         List<ImportedRow> importedRows = dataToConvert.getImportedRowList();
         List<RowAttribute> attributes = dataToConvert.getRowAttributes();
         double[][] valuesForAlgorithm = new double[importedRows.size()][];
         List<String> diagnoses = new ArrayList<>();
+        List<Integer> originalDataRowIds = new ArrayList<>();
         for(int i = 0; i < importedRows.size(); i++){
             double[] attrForRow = getAttributesForRow(importedRows.get(i).getRowId(), attributes);
             valuesForAlgorithm[i] = attrForRow;
             diagnoses.add(importedRows.get(i).getDiagnosis().toString());
+            originalDataRowIds.add(importedRows.get(i).getRowId());
         }
         DataForAlgorithm dataForAlgorithm = new DataForAlgorithm();
         dataForAlgorithm.setData(valuesForAlgorithm);
         dataForAlgorithm.setDiagnoses(diagnoses);
+        dataForAlgorithm.setOriginalDataRowIds(originalDataRowIds);
         return dataForAlgorithm;
     }
 
@@ -119,6 +135,10 @@ public class AlgorithmsServiceImpl implements AlgorithmsService {
                 dataMatrix, 2, dataMatrix.length, algorithmConfig.getPerplexity(),
                 algorithmConfig.getMaxIteration(), algorithmConfig.getUsePca(), algorithmConfig.getTheta(), false, true);
         return tSneConfiguration;
+    }
 
+    private AlgorithmsConfig getLLENeighboursConfiguration(){
+        return algorithmConfigurationRepository
+                .findTopByAlgorithmNameOrderByIdDesc(ConvertedDataInfo.ALGORITHM.LLE.getAlgorithmName());
     }
 }

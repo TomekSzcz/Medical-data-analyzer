@@ -60,6 +60,8 @@ public class ProcessedDataController {
             return ConvertedDataInfo.ALGORITHM.TSNE;
         }else if(ConvertedDataInfo.ALGORITHM.PCA.getAlgorithmName().equals(algorithmTrimmed)){
             return ConvertedDataInfo.ALGORITHM.PCA;
+        }else if(ConvertedDataInfo.ALGORITHM.LLE.getAlgorithmName().equals(algorithmTrimmed)){
+            return ConvertedDataInfo.ALGORITHM.LLE;
         }else{
             throw new IllegalArgumentException("Wrong Algorithm value: " + algorithmTrimmed);
         }

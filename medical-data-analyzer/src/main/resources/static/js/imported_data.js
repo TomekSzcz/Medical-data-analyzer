@@ -127,45 +127,91 @@
 
 var myApp = angular.module('imported', []);
 
-myApp.controller('imported', function ($scope, $http) {
-    $http.get('/processed/data').then(function (response) {
+myApp.controller('imported', function ($scope, $sce, $http) {
+      $http.get('/processed/data').then(function (response) {
         $scope.array = [];
         angular.forEach(response.data, function (element) {
             $scope.array.push(element);
         });
     });
 
+    function getRandomColor() {
+      var letters = '0123456789ABCDEF';
+      var color = '#';
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+
+    $scope.showValues = function (values){
+        var valuesArray = values.split(",");
+        var valuesTable = '<table style="width:100%"><tr><th>Key</th><th>Value</th></tr>'
+        function prettyPrint(element) {
+            var keyValue = element.split(":");
+            if(keyValue.length >= 2){
+               valuesTable += '<tr><th>'+keyValue[0]+'</th><th>'+keyValue[1]+'</th></tr>';
+            }
+        }
+        valuesArray.forEach(prettyPrint);
+        valuesTable += '</table>';
+        console.log(valuesTable);
+        //$scope.ad = { 'dataTooltip' : '<p class="values">'+ values +'</p>'};
+        $scope.ad = { 'dataTooltip' : valuesTable };
+
+        $scope.$apply(function () {
+               $scope.dataTooltip = $sce.trustAsHtml($scope.ad.dataTooltip);
+        });
+    }
+
     $scope.showChart = function (dataId, algorithm) {
+        $scope.clusters = [];
+        $scope.array1 = [];
+        $scope.array2 = [];
+        $scope.array2 = [];
+        $scope.array2 = [];
+        $scope.array2 = [];
+        $scope.array2 = [];
+        $scope.array2 = [];
+        $scope.array2 = [];
         $scope.arraySick = [];
         $scope.arrayHealthy = [];
         $(".overlay").show();
         $http.get('/processed/data/chart?importID=' + dataId + '&algorithm=' + algorithm).then(function (response) {
+            console.log(response);
             angular.forEach(response.data, function (element) {
                 if (element.diagnosis == 'healthy') {
                     var row = {
                         x: element.axisX,
                         y: element.axisY,
-                        r: 7
+                        r: 7,
+                        orig: element.originalDataValues
                     };
                     $scope.arrayHealthy.push(row);
                 } else if (element.diagnosis == 'sick') {
                     var row = {
                         x: element.axisX,
                         y: element.axisY,
-                        r: 7
+                        r: 7,
+                        orig: element.originalDataValues
+
                     };
                     $scope.arraySick.push(row);
                 }
             });
         });
 
-        $(".chart").show();
+        $scope.clusters.push($scope.arraySick);
+        $scope.clusters.push($scope.arrayHealthy);
+
+
         $scope.chartBubble = new Chart(document.getElementById("canvasBubble"), {
             type: 'bubble',
             data: {
                 labels: "Diagnosis",
                 datasets: [{
-                    label: ["Sick"],
+                    label: ["Sick" + $scope.arraySick],
                     backgroundColor: "rgba(211,50,21,0.6)",
                     borderColor: "rgba(176,34,44,0.9)",
                     title: "Sick",
@@ -198,9 +244,19 @@ myApp.controller('imported', function ($scope, $http) {
                             labelString: "X"
                         }
                     }]
+                },
+                onClick: function(e) {
+                    var element = this.getElementAtEvent(e);
+                    if (element.length) {
+                        var dataSet = element[0]._datasetIndex;
+                        var index = element[0]._index;
+                        $scope.showValues(element[0]._chart.config.data.datasets[dataSet].data[index].orig);
+                    }
                 }
+
             }
         });
+        $(".chart").show();
 
         $(".overlay").hide();
 

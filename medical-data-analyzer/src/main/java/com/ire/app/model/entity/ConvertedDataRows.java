@@ -12,6 +12,7 @@ public class ConvertedDataRows {
     private double axisX;
     private double axisY;
     private int copyId;
+    private int originalDataRowId;
 
 
     public ConvertedDataRowsPK getConvertedDataRowsPK() {
@@ -53,5 +54,13 @@ public class ConvertedDataRows {
 
     public void setCopyId(int copyId) {
         this.copyId = copyId;
+    }
+
+    public int getOriginalDataRowId() {
+        return originalDataRowId;
+    }
+
+    public void setOriginalDataRowId(int originalDataRowId) {
+        this.originalDataRowId = originalDataRowId;
     }
 }

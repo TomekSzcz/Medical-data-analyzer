@@ -7,17 +7,17 @@ import java.io.Serializable;
 @Embeddable
 public class ConvertedDataRowsPK implements Serializable{
 
-    @Column(name = "import_id")
-    private int importId;
+    @Column(name = "converted_data_id")
+    private int convertedDataId;
     @Column(name = "id")
     private int id;
 
-    public int getImportId() {
-        return importId;
+    public int getConvertedDataId() {
+        return convertedDataId;
     }
 
-    public void setImportId(int importId) {
-        this.importId = importId;
+    public void setConvertedDataId(int convertedDataId) {
+        this.convertedDataId = convertedDataId;
     }
 
     public int getId() {
