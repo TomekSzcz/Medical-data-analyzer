@@ -1,6 +1,5 @@
 # Medical-data-analyzer
 
-
 Medical-data-analyzer is created to allow Users to vizualize results of the most common dimensionality reduction algorithms.
 Currently there are two of them available:
 
@@ -37,10 +36,20 @@ The application is available under [localhost:8080](localhost:8080) address
 
 
 ### Maven build the source code
-To run the application directly from the source code checkout master branch:
+- install [mysql database](https://dev.mysql.com/doc/refman/5.7/en/windows-installation.html)
+- run [init.sql](https://github.com/TomekSzcz/Medical-data-analyzer/tree/master/medical-data-analyzer/db_schema) script from repository
+- checkout [master branch](https://github.com/TomekSzcz/Medical-data-analyzer)
+- build the application using command:
+  ```mvn build```
+- run the the application using command:
+  ``` java -jar medical-data-analyzer-1.0-SNAPSHOT.jar```
+  
 
-
+# Important
+This work is created in cooperation with [The Institute of Radioelectronics and Multimedia Technology](http://www.elka.pw.edu.pl/eng/Faculty/Faculty-Institutes2/The-Institute-of-Radioelectronics-and-Multimedia-Technology)
+as a part of final dissertation.
+Supervised by [dr inż. Piotr Płoński](http://www.ire.pw.edu.pl/~pplonski/index.html)
 
 ### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Having any trouble? Please, contact me directly using [e-mail](tomasz.szczesniak11@gmail.com)

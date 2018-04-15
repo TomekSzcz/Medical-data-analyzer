@@ -14,6 +14,8 @@ public interface AlgorithmsService {
 
     double[][] useTSneAlgorithm(double[][] dataMatrix);
 
+    double[][] useLLEAlgorithm(double[][] dataMatrix);
+
     DataForAlgorithm prepareDataForAlgorithm(DataToConvert dataToConvert);
 
     List<AlgorithmConfigData> getActualAlgorithmsConfiguration();

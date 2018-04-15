@@ -41,40 +41,43 @@ public class ManageDataServiceImpl implements ManageDataService {
     @Autowired
     private ConvertedDataRowsRepository convertedDataRowsRepository;
 
+    @Autowired
+    private OriginalDataForTooltipRepository originalDataForTooltipRepository;
 
     @Override
-    public boolean importData(MultipartFile multipartFile) {
-        try {
+    public boolean importData(MultipartFile multipartFile) throws IOException {
             File file = transferMultipartToConvFile(multipartFile);
             List<List<String>> dataToImport = csvReaderService.readCSVfile(file);
             collectAndSaveData(dataToImport, file.getName());
-
-        } catch (Exception e) {
-            LOGGER.error("Cannot import data {}", e.getMessage());
-            return false;
-        }
-        return true;
+            return true;
     }
 
     @Override
-    public void saveProcessedData(ConvertedDataInfo convertedDataInfo,
-                                  double[][] dataMatrix, List<String> diagnoses) {
+    public void saveProcessedData(ConvertedDataInfo convertedDataInfo, double[][] dataMatrix,
+                                  List<String> diagnoses, List<Integer> originalDataRowsIds) {
         try{
-            ConvertedDataInfo dataInfo = convertedDataInfoRepository.save(convertedDataInfo);
-            int importId = dataInfo.getImportId();
+            convertedDataInfoRepository.save(convertedDataInfo);
+            ConvertedDataInfo savedConvDataInfo = convertedDataInfoRepository.findByImportIdAndAlgorithm(
+                    convertedDataInfo.getImportId(), convertedDataInfo.getAlgorithm().getAlgorithmName());
+            int convertedDataId = savedConvDataInfo.getId();
             ConvertedDataRowsPK convertedDataRowsPK = new ConvertedDataRowsPK();
-
             for(int i = 0; i < diagnoses.size(); i++){
+                int originalDataRowId = originalDataRowsIds.get(i);
                 convertedDataRowsPK.setId(i);
-                convertedDataRowsPK.setImportId(importId);
+                convertedDataRowsPK.setConvertedDataId(convertedDataId);
                 ConvertedDataRows convertedDataRows = new ConvertedDataRows();
                 convertedDataRows.setConvertedDataRowsPK(convertedDataRowsPK);
                 convertedDataRows.setDiagnosis(diagnoses.get(i));
                 convertedDataRows.setAxisX(dataMatrix[i][0]);
                 convertedDataRows.setAxisY(dataMatrix[i][1]);
+                convertedDataRows.setOriginalDataRowId(originalDataRowId);
+                String originalRowsDataForTooltip = this.getOriginalRowsDataForTooltip(originalDataRowId);
+                OriginalDataForTooltip originalDataForTooltip = new OriginalDataForTooltip(originalDataRowId, originalRowsDataForTooltip);
+                originalDataForTooltipRepository.save(originalDataForTooltip);
                 convertedDataRowsRepository.save(convertedDataRows);
             }
-            markImportProcessed(importId, convertedDataInfo.getAlgorithm());
+            markImportProcessed(convertedDataInfo.getImportId(), convertedDataInfo.getAlgorithm());
+
 
         }catch (Exception e){
             LOGGER.error("Error occurred during saving processed data {} , reason: {}",
@@ -99,9 +102,22 @@ public class ManageDataServiceImpl implements ManageDataService {
     public List<DataToConvert> collectDataForPCA() {
         List<DataToConvert> dataToConvertList = new ArrayList<>();
         List<ImportedDataModel> importedDataForPSA =
-                importedDataRepository.getAllByImportStatusAndConvertedByPSA(
+                importedDataRepository.getAllByImportStatusAndConvertedByPCA(
                 ImportedDataModel.IMPORT_STATUS.SUCCESS.toString(), false);
         importedDataForPSA.stream().forEach(impData->{
+            DataToConvert dataToConvert = prepareDataToConvert(impData);
+            dataToConvertList.add(dataToConvert);
+        });
+        return dataToConvertList;
+    }
+
+    @Override
+    public List<DataToConvert> collectDataForLLE() {
+        List<DataToConvert> dataToConvertList = new ArrayList<>();
+        List<ImportedDataModel> importedDataForLLE =
+                importedDataRepository.getAllByImportStatusAndConvertedByLLE(
+                        ImportedDataModel.IMPORT_STATUS.SUCCESS.toString(), false);
+        importedDataForLLE.stream().forEach(impData->{
             DataToConvert dataToConvert = prepareDataToConvert(impData);
             dataToConvertList.add(dataToConvert);
         });
@@ -118,8 +134,9 @@ public class ManageDataServiceImpl implements ManageDataService {
             int id = row.getId();
             Date importDate = row.getImportDate();
             boolean tsne = row.isConvertedByTSNE();
-            boolean pca = row.isConvertedByPSA();
-            AvailableData availableData = new AvailableData(fileName, id, tsne, pca, importDate);
+            boolean pca = row.isConvertedByPCA();
+            boolean lle = row.isConvertedByLLE();
+            AvailableData availableData = new AvailableData(fileName, id, tsne, pca, lle, importDate);
             availableDataList.add(availableData);
         }
         return availableDataList;
@@ -130,14 +147,30 @@ public class ManageDataServiceImpl implements ManageDataService {
         if(importId == 0){
             throw new IllegalArgumentException("Import Id cannot be equals null!");
         }
+        ConvertedDataInfo convertedDataInfo = convertedDataInfoRepository.findByImportIdAndAlgorithm(importId,
+                algorithm.getAlgorithmName());
+
         List<ConvertedDataRows> convertedDataRows =
-                convertedDataRowsRepository.getAllByConvertedDataRowsPK_ImportIdOrderByCopyId(importId);
+                convertedDataRowsRepository.getAllByConvertedDataRowsPK_ConvertedDataIdOrderByCopyId(
+                        convertedDataInfo.getId());
         List<DataForChart> dataForChartList = new ArrayList<>();
+        int id = 0;
         for (ConvertedDataRows row : convertedDataRows){
-            DataForChart dataForChart = new DataForChart(row.getAxisX(),row.getAxisY(),row.getDiagnosis());
+            String originalDataValues = originalDataForTooltipRepository.findOne(row.getOriginalDataRowId()).getTooltipText();
+            DataForChart dataForChart = new DataForChart(id,row.getAxisX(),row.getAxisY(),row.getDiagnosis(), originalDataValues);
             dataForChartList.add(dataForChart);
+            id += 1;
         }
         return dataForChartList;
+    }
+
+    private String getOriginalRowsDataForTooltip(int rowId){
+        String origRowsDataForTooltip = "";
+        List<RowAttribute> rowData = rowAttributesRepository.getAllByCopyRowIdOrderByCopyRowId(rowId);
+        for (RowAttribute rowAttr : rowData) {
+            origRowsDataForTooltip += (rowAttr.getAttributeName() + ": "+rowAttr.getValue() + ", ");
+        }
+        return origRowsDataForTooltip;
     }
 
     private File transferMultipartToConvFile(MultipartFile multipartFile) throws IOException {
@@ -179,7 +212,7 @@ public class ManageDataServiceImpl implements ManageDataService {
 
         if(savedData == null){
             LOGGER.error("Cannot import data {} , reason: Database problem", fileName);
-            throw new IllegalArgumentException("Cannot save data - database is not available");
+            throw new IllegalArgumentException("DATABASE_NOT_AVAILABLE - Cannot save data - database is not available");
         }
         return savedData;
     }
@@ -189,7 +222,7 @@ public class ManageDataServiceImpl implements ManageDataService {
         if(diagnosisColumnNumber < 0){
             LOGGER.warn("There is no diagnosis column! {}", diagnosisColumnNumber);
             markImportFailed(importedDataModel);
-            throw new IllegalArgumentException("There is no diagnosis column!");
+            throw new IllegalArgumentException("NO_DIAGNOSIS_COLUMN - There is no diagnosis column!");
         }
         return diagnosisColumnNumber;
     }
@@ -224,22 +257,12 @@ public class ManageDataServiceImpl implements ManageDataService {
         ImportedRow importedRow = new ImportedRow();
         try {
             String diagnosisValue = values.get(diagnosisPosition);
-            importedRow.setDiagnosis(readDiagnosis(Integer.parseInt(diagnosisValue)));
+            importedRow.setDiagnosis(diagnosisValue);
             importedRow.setImportId(importedDataId);
             return importedRowRepository.save(importedRow);
         }catch (Exception e){
             LOGGER.error("Error during importing data with id: {} , reason: {}", importedDataId, e.getMessage());
             throw new IllegalArgumentException("Error during importing one of rows!");
-        }
-    }
-
-    private ImportedRow.DIAGNOSIS readDiagnosis(int diagnosis) throws IllegalArgumentException{
-        if(diagnosis == 0){
-            return ImportedRow.DIAGNOSIS.HEALTHY;
-        }else if(diagnosis == 1){
-            return ImportedRow.DIAGNOSIS.SICK;
-        }else {
-            throw new IllegalArgumentException("Unknown diagnosis value");
         }
     }
 
@@ -281,8 +304,10 @@ public class ManageDataServiceImpl implements ManageDataService {
         ImportedDataModel importedData = importedDataRepository.getById(importId);
         if(algorithm == ConvertedDataInfo.ALGORITHM.TSNE){
             importedData.setConvertedByTSNE(true);
-        }else if(algorithm == ConvertedDataInfo.ALGORITHM.PCA){
-            importedData.setConvertedByPSA(true);
+        }else if(algorithm == ConvertedDataInfo.ALGORITHM.PCA) {
+            importedData.setConvertedByPCA(true);
+        }else if(algorithm == ConvertedDataInfo.ALGORITHM.LLE){
+                importedData.setConvertedByLLE(true);
         }else {
             LOGGER.error("Algorithm not found, value: {}", algorithm.toString());
         }

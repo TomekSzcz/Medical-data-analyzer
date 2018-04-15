@@ -12,6 +12,7 @@ public class AlgorithmsConfig {
     private double perplexity;
     private int usePca;
     private double theta;
+    private int neighboursNo;
 
 
     public int getId() {
@@ -74,5 +75,13 @@ public class AlgorithmsConfig {
 
     public void setTheta(double theta) {
         this.theta = theta;
+    }
+
+    public int getNeighboursNo() {
+        return neighboursNo;
+    }
+
+    public void setNeighboursNo(int neighboursNo) {
+        this.neighboursNo = neighboursNo;
     }
 }

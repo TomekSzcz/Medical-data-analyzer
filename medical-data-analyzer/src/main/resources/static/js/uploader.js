@@ -27,9 +27,9 @@ myApp.service('fileUpload', ['$http', function ($http) {
                 $(".overlay").hide();
                 alert("File uploaded correctly!");
             })
-            .error(function(){
+            .error(function(response){
                 $(".overlay").hide();
-                alert("Some error occurred!");
+                alert("Cannot upload the file. Reason: " + response.errorMsg);
             });
     }
 }]);

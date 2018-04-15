@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ConvertedDataInfoRepository extends CrudRepository<ConvertedDataInfo, Integer> {
+
+    ConvertedDataInfo findByImportIdAndAlgorithm(int importId, String algorithm);
 }

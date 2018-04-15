@@ -18,7 +18,8 @@ public class ImportedDataModel {
     private String importStatus;
     private Date importDate;
     private boolean convertedByTSNE;
-    private boolean convertedByPSA;
+    private boolean convertedByPCA;
+    private boolean convertedByLLE;
 
     public Date getImportDate() {
         return importDate;
@@ -36,12 +37,20 @@ public class ImportedDataModel {
         this.convertedByTSNE = convertedByTSNE;
     }
 
-    public boolean isConvertedByPSA() {
-        return convertedByPSA;
+    public boolean isConvertedByPCA() {
+        return convertedByPCA;
     }
 
-    public void setConvertedByPSA(boolean convertedByPSA) {
-        this.convertedByPSA = convertedByPSA;
+    public void setConvertedByPCA(boolean convertedByPCA) {
+        this.convertedByPCA = convertedByPCA;
+    }
+
+    public boolean isConvertedByLLE() {
+        return convertedByLLE;
+    }
+
+    public void setConvertedByLLE(boolean convertedByLLE) {
+        this.convertedByLLE = convertedByLLE;
     }
 
     public enum IMPORT_STATUS {

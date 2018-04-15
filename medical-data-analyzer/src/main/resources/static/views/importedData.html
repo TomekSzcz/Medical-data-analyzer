@@ -71,6 +71,8 @@
         <canvas id="canvasBubble" height="600px" width="600px"></canvas>
     </div>
     <a ng-click="hideChart()" class="myButton">Close</a>
+    <div class="tooltipChartDiv" ng-bind-html="dataTooltip">
+    </div>
 </div>
 <div id="fade" class="black_overlay"></div>
 
@@ -110,6 +112,7 @@
                     <p style="color: firebrick">{{obj.importDate}}</p>
                     <a class="btn red" ng-click="showChart(obj.importId, 'tsne')">TSNE</a>
                     <a class="btn red" ng-click="showChart(obj.importId, 'pca')">PCA</a>
+                    <a class="btn btnDouble" ng-click="showChart(obj.importId, 'lle')">LLE</a>
                 </div>
                 <div class="clearfix visible-sm-block"></div>
             </div>

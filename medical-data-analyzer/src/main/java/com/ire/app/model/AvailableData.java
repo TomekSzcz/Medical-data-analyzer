@@ -12,15 +12,18 @@ public class AvailableData {
     private final String fileName;
     private final int importId;
     private final boolean isTSNEavailable;
-    private final boolean isPSAavailable;
+    private final boolean isPCAavailable;
+    private final boolean isLLEAvailable;
     private final String importDate;
     private final DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
 
-    public AvailableData(String fileName, int importId, boolean isTSNEavailable, boolean isPSAavailable, Date importDate) {
+    public AvailableData(String fileName, int importId, boolean isTSNEAvailable, boolean isPCAAvailable,
+                         boolean isLLEAvailable, Date importDate) {
         this.fileName = fileName;
         this.importId = importId;
-        this.isTSNEavailable = isTSNEavailable;
-        this.isPSAavailable = isPSAavailable;
+        this.isTSNEavailable = isTSNEAvailable;
+        this.isPCAavailable = isPCAAvailable;
+        this.isLLEAvailable = isLLEAvailable;
         this.importDate = dateFormat.format(importDate);
     }
 
@@ -36,8 +39,8 @@ public class AvailableData {
         return isTSNEavailable;
     }
 
-    public boolean isPSAavailable() {
-        return isPSAavailable;
+    public boolean isPCAavailable() {
+        return isPCAavailable;
     }
 
     public String getImportDate() {
