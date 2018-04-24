@@ -15,6 +15,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/processed/data")
@@ -40,12 +41,12 @@ public class ProcessedDataController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/chart")
-    public @ResponseBody ResponseEntity<List<DataForChart>> chartDataList(@RequestParam("importID") int importID,
+    public @ResponseBody ResponseEntity<Map<String, List<DataForChart>>> chartDataList(@RequestParam("importID") int importID,
                                                                           @RequestParam("algorithm") String algorithmString) {
         LOGGER.info("Retrieving chart data for algorithm: {} , import id: {}", algorithmString, importID);
         try{
             ConvertedDataInfo.ALGORITHM algorithm = checkAndGetAlgorithm(algorithmString);
-            List<DataForChart> chartData = manageDataService.getChartData(importID, algorithm);
+            Map<String, List<DataForChart>> chartData = manageDataService.getChartData(importID, algorithm);
             LOGGER.info("Found data with size: {}", chartData.size());
             return new ResponseEntity<>(chartData, HttpStatus.OK);
         }catch (Exception e){

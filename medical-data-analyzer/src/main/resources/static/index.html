@@ -83,11 +83,55 @@
 
     <div ng-controller="main" id="fh5co-main">
 
-        <div class="fh5co-narrow-content">
+        <div class="fh5co-narrow-content" style="padding-bottom: 10px">
                 <h2 class="fh5co-heading animate-box" data-animate-effect="fadeInLeft"><p>Medical Data
                     Analyzer</p></span></h2>
         </div>
+        <article class="markdown-body entry-content" itemprop="text" style="background-color: white;">
 
+            <p style="color: #4d4dff">Application is created to allow Users to visualize results of the most common</p>
+            <p style="color: #4d4dff">dimensionality reduction algorithms. Currently there are three of them available:</p>
+            <h3 style="padding-top: 30px; padding-left: 30px">T-SNE -&gt;</h3>
+            <p><a href="https://lvdmaaten.github.io/tsne/" rel="nofollow">Algorithm description</a></p>
+            <p><a href="https://github.com/lejon/T-SNE-Java">Implementation</a></p>
+            <h3 style="padding-top: 20px; padding-left: 30px">PCA -&gt;</h3>
+            <p><a href="https://en.wikipedia.org/wiki/Principal_component_analysis" rel="nofollow">Algorithm description</a></p>
+            <p><a href="https://github.com/mkobos/pca_transform">Implementation</a></p>
+            <h3 style="padding-top: 20px; padding-left: 30px">LLE -&gt;</h3>
+            <p><a href="https://en.wikipedia.org/wiki/Principal_component_analysis" rel="nofollow">Algorithm description</a></p>
+            <p><a href="https://github.com/mkobos/pca_transform">Implementation</a></p>
+            <h3 style="padding-top: 30px; padding-left: 30px">Using application</h3>
+            <p>There are two option to run the application:</p>
+            <h4 style="padding-top: 20px; padding-left: 30px">#Docker images</h4>
+            <p>To run the application you will need two docker images (available on the<a href="https://hub.docker.com/u/tszczesn/" rel="nofollow">official docker site</a>):</p>
+            <div style="padding-left: 30px" class="highlight highlight-source-gfm"><pre><span class="pl-v">-</span> medical_data_database -&gt; containing mysql database with created schema
+<span class="pl-v">-</span> medical_data_analyzer -&gt; image with web application which is using previous docker image as a database </pre></div>
+            <p>To pull the images from docker repository use the commands below:</p>
+            <pre><code>docker pull tszczesn/medical_data_database
+docker pull tszczesn/medical_data_analyzer
+</code></pre>
+            <p>and run both of them using the commands (NOTE: mind the order as the medical_data_database needs to be run first):</p>
+            <pre><code>docker run --name=medical_data_database -d tszczesn/medical_data_database
+docker run --link medical_data_database -p 8080:8080 --name=analyzer -d tszczesn/medical_data_analyzer
+</code></pre>
+            <p>The application is available under localhost:8080 address</p>
+            <h3><a id="user-content-maven-build-the-source-code" class="anchor" aria-hidden="true" href="#maven-build-the-source-code"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Maven build the source code</h3>
+            <ul>
+                <li>install <a href="https://dev.mysql.com/doc/refman/5.7/en/windows-installation.html" rel="nofollow">mysql database</a></li>
+                <li>run <a href="https://github.com/TomekSzcz/Medical-data-analyzer/tree/master/medical-data-analyzer/db_schema">init.sql</a> script from repository</li>
+                <li>checkout <a href="https://github.com/TomekSzcz/Medical-data-analyzer">master branch</a></li>
+                <li>build the application using command:
+                    <code>mvn build</code></li>
+                <li>run the the application using command:
+                    <code>java -jar medical-data-analyzer-1.0-SNAPSHOT.jar</code></li>
+            </ul>
+            <h1><a id="user-content-important" class="anchor" aria-hidden="true" href="#important"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Important</h1>
+            <p>This work is created in cooperation with <a href="http://www.elka.pw.edu.pl/eng/Faculty/Faculty-Institutes2/The-Institute-of-Radioelectronics-and-Multimedia-Technology" rel="nofollow">The Institute of Radioelectronics and Multimedia Technology</a>
+                as a part of final dissertation.
+                Supervised by <a href="http://www.ire.pw.edu.pl/%7Epplonski/index.html" rel="nofollow">dr inż. Piotr Płoński</a></p>
+            <h3><a id="user-content-support-or-contact" class="anchor" aria-hidden="true" href="#support-or-contact"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Support or Contact</h3>
+            <p>Having any trouble? Please, contact me directly using <a href="/TomekSzcz/Medical-data-analyzer/blob/gh-pages/tomasz.szczesniak11@gmail.com">e-mail</a></p>
+        </article>
 
         <div class="fh5co-testimonial">
             <div class="fh5co-narrow-content">

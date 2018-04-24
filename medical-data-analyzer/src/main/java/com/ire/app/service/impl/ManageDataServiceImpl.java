@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ManageDataServiceImpl implements ManageDataService {
@@ -143,7 +145,7 @@ public class ManageDataServiceImpl implements ManageDataService {
     }
 
     @Override
-    public List<DataForChart> getChartData(int importId, ConvertedDataInfo.ALGORITHM algorithm) {
+    public Map<String, List<DataForChart>> getChartData(int importId, ConvertedDataInfo.ALGORITHM algorithm) {
         if(importId == 0){
             throw new IllegalArgumentException("Import Id cannot be equals null!");
         }
@@ -151,7 +153,7 @@ public class ManageDataServiceImpl implements ManageDataService {
                 algorithm.getAlgorithmName());
 
         List<ConvertedDataRows> convertedDataRows =
-                convertedDataRowsRepository.getAllByConvertedDataRowsPK_ConvertedDataIdOrderByCopyId(
+                convertedDataRowsRepository.getAllByConvertedDataRowsPK_ConvertedDataIdOrderByConvertedDataRowsPK_ConvertedDataId(
                         convertedDataInfo.getId());
         List<DataForChart> dataForChartList = new ArrayList<>();
         int id = 0;
@@ -161,7 +163,9 @@ public class ManageDataServiceImpl implements ManageDataService {
             dataForChartList.add(dataForChart);
             id += 1;
         }
-        return dataForChartList;
+        Map<String, List<DataForChart>> dataForChartListGroupByDiagnosis =
+                dataForChartList.stream().collect(Collectors.groupingBy(w -> w.getDiagnosis()));
+        return dataForChartListGroupByDiagnosis;
     }
 
     private String getOriginalRowsDataForTooltip(int rowId){

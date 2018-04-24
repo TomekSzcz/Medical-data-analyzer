@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface ManageDataService {
 
@@ -25,6 +26,6 @@ public interface ManageDataService {
 
     List<AvailableData> getImports();
 
-    List<DataForChart> getChartData(int importId, ConvertedDataInfo.ALGORITHM algorithm);
+    Map<String, List<DataForChart>> getChartData(int importId, ConvertedDataInfo.ALGORITHM algorithm);
 
 }

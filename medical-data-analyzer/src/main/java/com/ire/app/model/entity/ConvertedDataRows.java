@@ -11,7 +11,6 @@ public class ConvertedDataRows {
     private String diagnosis;
     private double axisX;
     private double axisY;
-    private int copyId;
     private int originalDataRowId;
 
 
@@ -21,7 +20,6 @@ public class ConvertedDataRows {
 
     public void setConvertedDataRowsPK(ConvertedDataRowsPK convertedDataRowsPK) {
         this.convertedDataRowsPK = convertedDataRowsPK;
-        this.copyId = convertedDataRowsPK.getId();
     }
 
     public String getDiagnosis() {
@@ -48,13 +46,6 @@ public class ConvertedDataRows {
         this.axisY = axisY;
     }
 
-    public int getCopyId() {
-        return copyId;
-    }
-
-    public void setCopyId(int copyId) {
-        this.copyId = copyId;
-    }
 
     public int getOriginalDataRowId() {
         return originalDataRowId;

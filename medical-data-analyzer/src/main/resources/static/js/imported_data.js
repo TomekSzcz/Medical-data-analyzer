@@ -147,7 +147,7 @@ myApp.controller('imported', function ($scope, $sce, $http) {
 
     $scope.showValues = function (values){
         var valuesArray = values.split(",");
-        var valuesTable = '<table style="width:100%"><tr><th>Key</th><th>Value</th></tr>'
+        var valuesTable = '<table style="width:100%; margin-left: 35%"><tr><th>Key</th><th>Value</th></tr>'
         function prettyPrint(element) {
             var keyValue = element.split(":");
             if(keyValue.length >= 2){
@@ -156,10 +156,7 @@ myApp.controller('imported', function ($scope, $sce, $http) {
         }
         valuesArray.forEach(prettyPrint);
         valuesTable += '</table>';
-        console.log(valuesTable);
-        //$scope.ad = { 'dataTooltip' : '<p class="values">'+ values +'</p>'};
         $scope.ad = { 'dataTooltip' : valuesTable };
-
         $scope.$apply(function () {
                $scope.dataTooltip = $sce.trustAsHtml($scope.ad.dataTooltip);
         });
@@ -167,101 +164,80 @@ myApp.controller('imported', function ($scope, $sce, $http) {
 
     $scope.showChart = function (dataId, algorithm) {
         $scope.clusters = [];
-        $scope.array1 = [];
-        $scope.array2 = [];
-        $scope.array2 = [];
-        $scope.array2 = [];
-        $scope.array2 = [];
-        $scope.array2 = [];
-        $scope.array2 = [];
-        $scope.array2 = [];
-        $scope.arraySick = [];
-        $scope.arrayHealthy = [];
-        $(".overlay").show();
-        $http.get('/processed/data/chart?importID=' + dataId + '&algorithm=' + algorithm).then(function (response) {
-            console.log(response);
-            angular.forEach(response.data, function (element) {
-                if (element.diagnosis == 'healthy') {
-                    var row = {
-                        x: element.axisX,
-                        y: element.axisY,
-                        r: 7,
-                        orig: element.originalDataValues
-                    };
-                    $scope.arrayHealthy.push(row);
-                } else if (element.diagnosis == 'sick') {
-                    var row = {
-                        x: element.axisX,
-                        y: element.axisY,
-                        r: 7,
-                        orig: element.originalDataValues
+        $scope.dataSets = [];
 
-                    };
-                    $scope.arraySick.push(row);
+        $(".overlay").show();
+        $http.get('/processed/data/chart?importID=' + dataId + '&algorithm=' + algorithm).success(function (response) {
+            angular.forEach(response, function (element) {
+                var arrayData = [];
+                element.forEach(function(rowValues){
+                    var row = {
+                        x: rowValues.axisX,
+                        y: rowValues.axisY,
+                        r: 7,
+                        orig: rowValues.originalDataValues,
+                        diagnosis: rowValues.diagnosis
+                    }
+                    arrayData.push(row);
+                });
+                $scope.clusters.push(arrayData);
+                var color = getRandomColor();
+                var borderColor = getRandomColor();
+                var dataSet = {
+                    label: [element[0].diagnosis],
+                    backgroundColor: color,
+                    borderColor: borderColor,
+                    title: element[0].diagnosis,
+                    data: arrayData,
+                    display: true
+                }
+                $scope.dataSets.push(dataSet);
+            });
+            console.log($scope.dataSets);
+
+            $scope.chartBubble = new Chart(document.getElementById("canvasBubble"), {
+                type: 'bubble',
+                data: {
+                    labels: "Diagnosis",
+                    datasets: $scope.dataSets
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Data processed using algorithm: ' + algorithm
+                    },
+                    scales: {
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: "Y"
+                            }
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: "X"
+                            }
+                        }]
+                    },
+                    onClick: function(e) {
+                        var element = this.getElementAtEvent(e);
+                        if (element.length) {
+                            var dataSet = element[0]._datasetIndex;
+                            var index = element[0]._index;
+                            $scope.showValues(element[0]._chart.config.data.datasets[dataSet].data[index].orig);
+                        }
+                    }
+
                 }
             });
+            $(".chart").show();
+            $(".overlay").hide();
+            document.getElementById("light").style.display = 'block';
+            document.getElementById("fade").style.display = 'block';
         });
 
-        $scope.clusters.push($scope.arraySick);
-        $scope.clusters.push($scope.arrayHealthy);
 
-
-        $scope.chartBubble = new Chart(document.getElementById("canvasBubble"), {
-            type: 'bubble',
-            data: {
-                labels: "Diagnosis",
-                datasets: [{
-                    label: ["Sick" + $scope.arraySick],
-                    backgroundColor: "rgba(211,50,21,0.6)",
-                    borderColor: "rgba(176,34,44,0.9)",
-                    title: "Sick",
-                    data: $scope.arraySick,
-                    display: true
-                }, {
-                    label: ["Healthy"],
-                    backgroundColor: "rgba(60,186,159,0.2)",
-                    borderColor: "rgba(60,186,159,1)",
-                    title: "Healthy",
-                    data: $scope.arrayHealthy,
-                    display: true
-                }]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: 'Data processed using algorithm: ' + algorithm
-                },
-                scales: {
-                    yAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: "Y"
-                        }
-                    }],
-                    xAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: "X"
-                        }
-                    }]
-                },
-                onClick: function(e) {
-                    var element = this.getElementAtEvent(e);
-                    if (element.length) {
-                        var dataSet = element[0]._datasetIndex;
-                        var index = element[0]._index;
-                        $scope.showValues(element[0]._chart.config.data.datasets[dataSet].data[index].orig);
-                    }
-                }
-
-            }
-        });
-        $(".chart").show();
-
-        $(".overlay").hide();
-
-        document.getElementById("light").style.display = 'block';
-        document.getElementById("fade").style.display = 'block';
 
     };
 
