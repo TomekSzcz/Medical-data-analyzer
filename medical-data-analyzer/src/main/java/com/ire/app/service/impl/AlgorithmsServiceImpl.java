@@ -41,7 +41,7 @@ public class AlgorithmsServiceImpl implements AlgorithmsService {
 
         PCA pca = new PCA(algorithmData);
         Matrix transformedData =
-                pca.transform(algorithmData, PCA.TransformationType.WHITENING);
+                pca.transform(algorithmData, PCA.TransformationType.ROTATION);
         return transformedData.getArray();
     }
 

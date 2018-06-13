@@ -31,7 +31,10 @@ public class convertImportedDataScheduler {
         LOGGER.info("Found imports TSNE: {}", dataToConvertList.size());
         dataToConvertList.stream().forEach(dataToConvert -> {
             DataForAlgorithm dataForAlgorithm = algorithmsService.prepareDataForAlgorithm(dataToConvert);
+            long timeMillis = System.currentTimeMillis();
+            LOGGER.info("START: {}",timeMillis);
             double[][] resultsTSNE = algorithmsService.useTSneAlgorithm(dataForAlgorithm.getData());
+            LOGGER.info("DIFF: {}", (System.currentTimeMillis() - timeMillis));
             LOGGER.info("Results for TSNE size: {}", resultsTSNE[0].length);
             ConvertedDataInfo convertedDataInfo = prepareProccessedData(dataToConvert.getImportedDataModel().getFileName(),
                     ConvertedDataInfo.ALGORITHM.TSNE, dataToConvert.getImportedDataModel().getId());

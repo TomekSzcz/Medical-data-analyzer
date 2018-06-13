@@ -63,6 +63,7 @@ public class ManageDataServiceImpl implements ManageDataService {
                     convertedDataInfo.getImportId(), convertedDataInfo.getAlgorithm().getAlgorithmName());
             int convertedDataId = savedConvDataInfo.getId();
             ConvertedDataRowsPK convertedDataRowsPK = new ConvertedDataRowsPK();
+            LOGGER.info("Result: {}", dataMatrix.length);
             for(int i = 0; i < diagnoses.size(); i++){
                 int originalDataRowId = originalDataRowsIds.get(i);
                 convertedDataRowsPK.setId(i);
@@ -76,14 +77,16 @@ public class ManageDataServiceImpl implements ManageDataService {
                 String originalRowsDataForTooltip = this.getOriginalRowsDataForTooltip(originalDataRowId);
                 OriginalDataForTooltip originalDataForTooltip = new OriginalDataForTooltip(originalDataRowId, originalRowsDataForTooltip);
                 originalDataForTooltipRepository.save(originalDataForTooltip);
+                LOGGER.info("Saving converted data row: {},{}, {}, {}, {}", convertedDataRows.getDiagnosis(),
+                        convertedDataRows.getAxisX(), convertedDataRows.getAxisY(), convertedDataRows.getOriginalDataRowId());
                 convertedDataRowsRepository.save(convertedDataRows);
             }
             markImportProcessed(convertedDataInfo.getImportId(), convertedDataInfo.getAlgorithm());
 
 
         }catch (Exception e){
-            LOGGER.error("Error occurred during saving processed data {} , reason: {}",
-                    convertedDataInfo.getFileName(), e.getMessage());
+            LOGGER.error("Error occurred during saving processed data {} , reason: {} , stack: {}",
+                    convertedDataInfo.getFileName(), e.getMessage(), e.getStackTrace());
         }
     }
 
@@ -253,7 +256,7 @@ public class ManageDataServiceImpl implements ManageDataService {
                                             int diagnosisPosition, int importedDataId){
 
         ImportedRow importedRow = importRow(values, diagnosisPosition, importedDataId);
-        importRowValues(importedRow.getRowId(), values, headers);
+        importRowValues(importedRow.getRowId(), values, headers, diagnosisPosition);
 
     }
 
@@ -270,17 +273,19 @@ public class ManageDataServiceImpl implements ManageDataService {
         }
     }
 
-    private void importRowValues(int rowId, List<String> values, List<String> headers){
+    private void importRowValues(int rowId, List<String> values, List<String> headers, int diagnosisPosition){
         try {
             for(int i = 0; i < values.size(); i++){
-                RowAttribute rowAttribute = new RowAttribute();
-                rowAttribute.setAttributeName(headers.get(i));
-                rowAttribute.setValue(Double.parseDouble(values.get(i)));
-                RowAttributePK rowAttributePK = new RowAttributePK();
-                rowAttributePK.setAttributeId(i);
-                rowAttributePK.setRowId(rowId);
-                rowAttribute.setRowAttributePK(rowAttributePK);
-                rowAttributesRepository.save(rowAttribute);
+                if (i != diagnosisPosition) {
+                    RowAttribute rowAttribute = new RowAttribute();
+                    rowAttribute.setAttributeName(headers.get(i));
+                    rowAttribute.setValue(Double.parseDouble(values.get(i)));
+                    RowAttributePK rowAttributePK = new RowAttributePK();
+                    rowAttributePK.setAttributeId(i);
+                    rowAttributePK.setRowId(rowId);
+                    rowAttribute.setRowAttributePK(rowAttributePK);
+                    rowAttributesRepository.save(rowAttribute);
+                }
             }
         }catch (Exception e){
             LOGGER.error("Error during import Attributes for row {}", rowId);
