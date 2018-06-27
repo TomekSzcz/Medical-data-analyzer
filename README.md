@@ -1,6 +1,6 @@
 # Medical-data-analyzer
 
-Medical-data-analyzer is created to allow Users to vizualize results of the most common dimensionality reduction algorithms.
+Medical-data-analyzer is created to allow Users to visualize results of the most common dimensionality reduction algorithms.
 Currently there are two of them available:
 
 ### T-SNE -> 
